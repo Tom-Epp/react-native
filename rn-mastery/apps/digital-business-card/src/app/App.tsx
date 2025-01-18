@@ -11,14 +11,15 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
-import { FontAwesome6 as FAIcon } from '@expo/vector-icons';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
-import { DisplayInsets } from './DisplayInsets';
+import { DisplayInsets } from '@/components/DisplayInsets';
+import { SocialMediaIcons } from '@components/SocialMediaIcons';
+import { SocialMediaLinks } from '@utils/constants';
 
 export const App = () => {
   const [loading, setLoading] = React.useState(true);
   const onContactMe = async () =>
-    await Linking.openURL('mailto:tomepp.dev@gmail.com');
+    await Linking.openURL(`mailto:${SocialMediaLinks.at}`);
 
   React.useEffect(() => {
     (async () => {
@@ -67,23 +68,7 @@ export const App = () => {
             />
             <Text style={{ fontSize: 30, fontWeight: 'bold' }}>Thomas Epp</Text>
             <Text>Senior Software Engineer</Text>
-            <View
-              style={{
-                flex: 1,
-                flexDirection: 'row',
-                gap: 10,
-                marginVertical: 10,
-              }}
-            >
-              {['github', 'x-twitter', 'linkedin', 'at'].map(social => (
-                <FAIcon
-                  name={social}
-                  size={24}
-                  color="black"
-                  key={`${social}-icon`}
-                />
-              ))}
-            </View>
+            <SocialMediaIcons />
             <DisplayInsets />
             <Button title="Contact Me" onPress={onContactMe} />
             <Text
