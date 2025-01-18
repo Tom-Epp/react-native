@@ -8,6 +8,7 @@ import {
   ScrollView,
   Button,
   Linking,
+  ActivityIndicator,
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { FontAwesome6 as FAIcon } from '@expo/vector-icons';
@@ -15,8 +16,32 @@ import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { DisplayInsets } from './DisplayInsets';
 
 export const App = () => {
+  const [loading, setLoading] = React.useState(true);
   const onContactMe = async () =>
     await Linking.openURL('mailto:tomepp.dev@gmail.com');
+
+  React.useEffect(() => {
+    (async () => {
+      await new Promise(resolve => setTimeout(resolve, 3000));
+      setLoading(false);
+    })();
+  }, []);
+
+  if (loading) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+          gap: 10,
+        }}
+      >
+        <ActivityIndicator size="small" />
+        <Text>Fetching data..</Text>
+      </View>
+    );
+  }
 
   return (
     <SafeAreaProvider>
