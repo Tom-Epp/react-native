@@ -15,6 +15,7 @@ import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { DisplayInsets } from '@/components/DisplayInsets';
 import { SocialMediaIcons } from '@components/SocialMediaIcons';
 import { SocialMediaLinks } from '@utils/constants';
+import "../../global.css";
 
 export const App = () => {
   const [loading, setLoading] = React.useState(true);
