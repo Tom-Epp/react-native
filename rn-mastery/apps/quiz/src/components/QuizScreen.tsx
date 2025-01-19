@@ -11,7 +11,7 @@ export function QuizScreen() {
         <View>
           <Text>Question 1/5</Text>
         </View>
-        <View className="bg-amber-300 w-full items-center gap-2">
+        <View className="w-full items-center gap-2">
           <QuestionCard question={question} />
           <Text className="">20 sec</Text>
         </View>
