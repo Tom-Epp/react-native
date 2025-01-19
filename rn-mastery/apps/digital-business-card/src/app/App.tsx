@@ -14,7 +14,6 @@ import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { DisplayInsets } from '@/components/DisplayInsets';
 import { SocialMediaIcons } from '@components/SocialMediaIcons';
 import { SocialMediaLinks } from '@utils/constants';
-import ProfileImage from '@assets/tom.jpg'
 import "../../global.css";
 
 export const App = () => {
@@ -24,7 +23,7 @@ export const App = () => {
 
   React.useEffect(() => {
     (async () => {
-      await new Promise(resolve => setTimeout(resolve, 5200));
+      await new Promise(resolve => setTimeout(resolve, 500));
       setLoading(false);
     })();
   }, []);
@@ -49,7 +48,7 @@ export const App = () => {
             />
             <Image
               className="size-36 rounded-full border-4 border-white -mt-20"
-              source={ProfileImage}
+              source={require('@assets/tom.jpg')}
             />
             <Text className="font-bold text-3xl">Thomas Epp</Text>
             <Text className='font-medium'>Senior Software Engineer</Text>
