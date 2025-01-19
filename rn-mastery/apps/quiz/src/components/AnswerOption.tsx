@@ -1,9 +1,28 @@
-import { Text, View } from 'react-native';
+import React from 'react';
+import { Pressable, Text } from 'react-native';
+import { twMerge } from 'tailwind-merge';
 
-export function AnswerOption({ option }: { option: string }) {
+type AnswerOptionProps = {
+  option: string;
+  isSelected: boolean;
+  onPress: React.Dispatch<React.SetStateAction<string | null>>;
+};
+
+export function AnswerOption({
+  option,
+  isSelected,
+  onPress,
+}: AnswerOptionProps) {
+  console.log('isSelected', isSelected);
   return (
-    <View className="border p-5 rounded-full border-gray-300">
+    <Pressable
+      onPress={() => onPress(option)}
+      className={twMerge(
+        'border p-5 rounded-full border-gray-300 bg-green-800',
+        isSelected ? 'bg-red' : 'bg-green'
+      )}
+    >
       <Text className="">{option}</Text>
-    </View>
+    </Pressable>
   );
 }
