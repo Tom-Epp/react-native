@@ -1,0 +1,9 @@
+{
+  "name": "quiz-e2e",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "apps/quiz-e2e/src",
+  "implicitDependencies": ["quiz"],
+  "// targets": "to see all targets run: nx show project quiz-e2e --web",
+  "targets": {}
+}
