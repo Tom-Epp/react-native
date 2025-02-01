@@ -1,30 +1,18 @@
-import { View, Text } from 'react-native';
+import { View } from 'react-native';
 import { AnswerOption } from '@components/AnswerOption';
 import { Question } from '@/types';
-import { useState } from 'react';
+import Card from '@components/Card';
 
-interface QuestionCardProps {
-  question: Question;
-}
+type QuestionCard = { question: Question };
 
-export function QuestionCard({
-  question: { options, title, correctAnswer },
-}: QuestionCardProps) {
-  const [selectedOption, setSelectedOption] = useState<string | null>(null);
-  console.log(selectedOption);
+export function QuestionCard({ question: { options, title } }: QuestionCard) {
   return (
-    <View className="bg-white p-5 rounded-xl py-10 gap-5 shadow-md w-5/6">
-      <Text className="text-2xl font-medium">{title}</Text>
+    <Card title={title}>
       <View className="gap-5">
         {options.map((option, index) => (
-          <AnswerOption
-            onPress={setSelectedOption}
-            option={option}
-            key={`option-${index + 1}`}
-            isSelected={option === selectedOption}
-          />
+          <AnswerOption option={option} key={`option-${index + 1}`} />
         ))}
       </View>
-    </View>
+    </Card>
   );
 }

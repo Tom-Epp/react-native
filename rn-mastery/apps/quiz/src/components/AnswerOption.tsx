@@ -1,25 +1,23 @@
 import React from 'react';
 import { Pressable, Text } from 'react-native';
 import { twMerge } from 'tailwind-merge';
+import { useQuizContext } from '@/providers/QuizProvider';
 
-type AnswerOptionProps = {
+type AnswerOption = {
   option: string;
-  isSelected: boolean;
-  onPress: React.Dispatch<React.SetStateAction<string | null>>;
 };
 
-export function AnswerOption({
-  option,
-  isSelected,
-  onPress,
-}: AnswerOptionProps) {
-  console.log('isSelected', isSelected);
+export function AnswerOption({ option }: AnswerOption) {
+  const { selectedOption, setSelectedOption } = useQuizContext();
+  const isSelected = selectedOption === option;
   return (
     <Pressable
-      onPress={() => onPress(option)}
+      onPress={() => setSelectedOption(option)}
       className={twMerge(
-        'border p-5 rounded-full border-gray-300 bg-green-800',
-        isSelected ? 'bg-red' : 'bg-green'
+        'border p-5 rounded-full',
+        isSelected
+          ? 'bg-[#E1F396] border-[#E1F396]'
+          : 'bg-white border-gray-300'
       )}
     >
       <Text className="">{option}</Text>
