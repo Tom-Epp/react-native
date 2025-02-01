@@ -1,17 +1,19 @@
-import { PropsWithChildren, useContext, useState } from 'react';
+import { PropsWithChildren, useContext, useEffect, useState } from 'react';
 import { createContext } from 'react';
 import Questions from '@/questions';
 import { Question } from '@/types';
 import { noop } from 'lodash';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type QuizContext = {
   question?: Question;
   questionIndex: number;
-  onNext?: () => void;
+  onNext: () => void;
   selectedOption?: string;
   setSelectedOption: (newOption: string) => void;
   score: number;
   totalQuestions: number;
+  bestScore: number;
 };
 
 const QuizContext = createContext<QuizContext>({
@@ -21,17 +23,32 @@ const QuizContext = createContext<QuizContext>({
   onNext: () => noop,
   setSelectedOption: () => noop,
   totalQuestions: 0,
+  bestScore: 0,
 });
 
 export const QuizProvider = ({ children }: PropsWithChildren) => {
   const [questionIndex, setQuestionIndex] = useState(0);
   const [selectedOption, setSelectedOption] = useState<string | undefined>();
   const [score, setScore] = useState(0);
+  const [bestScore, setBestScore] = useState(0);
   const question = Questions[questionIndex];
-
   const isFinished = questionIndex >= Questions.length;
+
+  useEffect(() => {
+    void loadBestScore();
+  }, []);
+
+  useEffect(() => {
+    if (isFinished && score > bestScore) {
+      setBestScore(score);
+      void saveBestScore(score);
+    }
+  }, [isFinished]);
+
   const restartQuiz = () => {
     setQuestionIndex(0);
+    setSelectedOption(undefined);
+    setScore(0);
   };
 
   const onNext = () => {
@@ -46,6 +63,25 @@ export const QuizProvider = ({ children }: PropsWithChildren) => {
     }
   };
 
+  const saveBestScore = async (score: number) => {
+    try {
+      await AsyncStorage.setItem('best-score', score.toString());
+    } catch (error) {
+      console.log('Error saving score', error);
+    }
+  };
+
+  const loadBestScore = async () => {
+    try {
+      const bestScore = await AsyncStorage.getItem('best-score');
+      if (bestScore) {
+        setBestScore(Number.parseInt(bestScore));
+      }
+    } catch (error) {
+      console.log('Error loading score', error);
+    }
+  };
+
   return (
     <QuizContext.Provider
       value={{
@@ -56,6 +92,7 @@ export const QuizProvider = ({ children }: PropsWithChildren) => {
         score,
         setSelectedOption,
         totalQuestions: Questions.length,
+        bestScore,
       }}
     >
       {children}

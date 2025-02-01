@@ -1,18 +1,24 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { Pressable, Text } from 'react-native';
 import { twMerge } from 'tailwind-merge';
 import { useQuizContext } from '@/providers/QuizProvider';
 
-type AnswerOption = {
+interface AnswerOptionProps {
   option: string;
-};
+}
 
-export function AnswerOption({ option }: AnswerOption) {
+export function AnswerOption({ option }: AnswerOptionProps) {
   const { selectedOption, setSelectedOption } = useQuizContext();
   const isSelected = selectedOption === option;
+
+  const handlePress = useCallback(() => {
+    setSelectedOption(option);
+  }, [option, setSelectedOption]);
+
   return (
     <Pressable
-      onPress={() => setSelectedOption(option)}
+      onPress={handlePress}
+      accessibilityRole="button"
       className={twMerge(
         'border p-5 rounded-full',
         isSelected
@@ -20,7 +26,7 @@ export function AnswerOption({ option }: AnswerOption) {
           : 'bg-white border-gray-300'
       )}
     >
-      <Text className="">{option}</Text>
+      <Text>{option}</Text>
     </Pressable>
   );
 }
