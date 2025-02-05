@@ -1,6 +1,7 @@
 {
   "name": "camera",
   "version": "0.0.1",
+  "main": "expo-router/entry",
   "private": true,
   "dependencies": {
     "@testing-library/jest-native": "*",

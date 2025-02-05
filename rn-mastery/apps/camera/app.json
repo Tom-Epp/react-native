@@ -3,6 +3,7 @@
     "name": "Camera",
     "slug": "camera",
     "version": "1.0.0",
+    "scheme": "te-camera",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
@@ -27,6 +28,6 @@
       "favicon": "./assets/favicon.png",
       "bundler": "metro"
     },
-    "plugins": []
+    "plugins": ["expo-router"]
   }
 }
