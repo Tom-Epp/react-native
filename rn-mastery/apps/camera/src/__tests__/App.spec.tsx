@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { render } from '@testing-library/react-native';
 
-import _layout from '../app/_layout';
+import index from '../app';
 
 test('renders correctly', () => {
-  const { getByTestId } = render(<_layout />);
+  const { getByTestId } = render(<index />);
   // @ts-ignore
   expect(getByTestId('heading')).toHaveTextContent('Welcome');
 });
