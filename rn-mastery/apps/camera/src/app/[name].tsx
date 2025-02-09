@@ -5,11 +5,13 @@ import * as FileSystem from 'expo-file-system';
 import { MaterialIcons } from '@expo/vector-icons';
 import { getMediaType } from '@utils/media';
 import { useVideoPlayer, VideoView } from 'expo-video';
+import * as MediaLibrary from 'expo-media-library';
 
 export default function ImageDetailsScreen() {
   const { name } = useLocalSearchParams<{ name: string }>();
   const fullUri = (FileSystem.documentDirectory || '') + (name || '');
   const type = getMediaType(fullUri);
+  const [permissionResponse, requestPermission] = MediaLibrary.usePermissions();
 
   const player = useVideoPlayer(fullUri, player => {
     player.loop = true;
@@ -20,6 +22,14 @@ export default function ImageDetailsScreen() {
     await FileSystem.deleteAsync(fullUri);
     router.back();
   };
+
+  const onSave = async () => {
+    if (permissionResponse?.status !== 'granted') {
+      await requestPermission();
+    }
+    const asset = await MediaLibrary.createAssetAsync(fullUri);
+  };
+
   return (
     <View className="flex-1 items-center justify-center">
       <Stack.Screen
@@ -34,7 +44,7 @@ export default function ImageDetailsScreen() {
                 color="crimson"
               />
               <MaterialIcons
-                onPress={() => {}}
+                onPress={onSave}
                 name="save"
                 size={26}
                 color="dimgray"
