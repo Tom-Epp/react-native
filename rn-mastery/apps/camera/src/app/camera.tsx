@@ -17,11 +17,15 @@ import {
 } from 'expo-camera';
 import path from 'path';
 import * as FileSystem from 'expo-file-system';
+import { twMerge } from 'tailwind-merge';
+import { Video } from 'expo-av';
 
 export default function CameraScreen() {
   const [permission, requestPermission] = useCameraPermissions();
   const [facing, setFacing] = useState<CameraType>('back');
   const [picture, setPicture] = useState<CameraCapturedPicture>();
+  const [isRecording, setIsRecording] = useState(false);
+  const [video, setVideo] = useState<string>();
 
   const camera = useRef<CameraView>(null);
 
@@ -39,13 +43,30 @@ export default function CameraScreen() {
     setFacing(current => (current === 'back' ? 'front' : 'back'));
   };
 
+  const onPress = async () => {
+    if (isRecording) {
+      camera?.current?.stopRecording();
+    } else {
+      await takePicture();
+    }
+  };
+
   const takePicture = async () => {
     const response = await camera?.current?.takePictureAsync();
     setPicture(response);
-    console.log('takePicture', response);
   };
 
-  const saveFile = async (uri: string) => {
+  const startRecording = async () => {
+    setIsRecording(true);
+    const res = await camera?.current?.recordAsync({ maxDuration: 60 });
+    setVideo(res?.uri);
+    setIsRecording(false);
+  };
+
+  const saveFile = async (uri: string | undefined) => {
+    if (!uri) {
+      return;
+    }
     const fileName = path.parse(uri).base;
     await FileSystem.copyAsync({
       from: uri,
@@ -53,20 +74,39 @@ export default function CameraScreen() {
     });
 
     setPicture(undefined);
+    setVideo(undefined);
     router.back();
   };
 
-  if (picture) {
+  if (picture || video) {
     return (
       <View className="flex-1">
-        <Image source={{ uri: picture?.uri }} className="w-full flex-1" />
+        {picture && (
+          <Image source={{ uri: picture?.uri }} className="w-full flex-1" />
+        )}
+        {video && (
+          <Video
+            style={{ flex: 1, width: '100%' }}
+            source={{ uri: video }}
+            shouldPlay
+            isLooping
+          />
+        )}
         <View className="p-2.5">
           <SafeAreaView edges={['bottom']}>
-            <Button title="Save" onPress={() => saveFile(picture.uri)} />
+            <Button
+              title="Save"
+              onPress={() => {
+                void saveFile(picture?.uri || video);
+              }}
+            />
           </SafeAreaView>
         </View>
         <MaterialIcons
-          onPress={() => setPicture(undefined)}
+          onPress={() => {
+            setPicture(undefined);
+            setVideo(undefined);
+          }}
           name="close"
           size={30}
           color="white"
@@ -79,6 +119,7 @@ export default function CameraScreen() {
   return (
     <View className="flex-1 items-center justify-center">
       <CameraView
+        mode="video"
         ref={camera}
         style={{ width: '100%', height: '100%' }}
         facing={facing}
@@ -86,8 +127,12 @@ export default function CameraScreen() {
         <View className="mt-auto p-5 pb-12 flex flex-row justify-between items-center bg-[#00000099]">
           <View />
           <Pressable
-            className="w-14 h-14 rounded-full bg-white"
-            onPress={takePicture}
+            className={twMerge(
+              'w-14 h-14 rounded-full',
+              isRecording ? 'bg-red-800' : 'bg-white'
+            )}
+            onPress={onPress}
+            onLongPress={startRecording}
           ></Pressable>
           <MaterialIcons
             onPress={toggleCameraFacing}

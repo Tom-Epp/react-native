@@ -1,13 +1,16 @@
 import '../../global.css';
-import React, { useCallback, useEffect, useState } from 'react';
-import { View, Text, Pressable, FlatList, Image } from 'react-native';
+import React, { useCallback, useState } from 'react';
+import { FlatList, Image, Pressable, View } from 'react-native';
 import { Link, useFocusEffect } from 'expo-router';
 import { MaterialIcons } from '@expo/vector-icons';
 import * as FileSystem from 'expo-file-system';
+import { getMediaType, MediaType } from '@utils/media';
+import { ResizeMode, Video } from 'expo-av';
 
 type Media = {
   name: string;
   uri: string;
+  type: MediaType;
 };
 
 export default function HomeScreen() {
@@ -21,13 +24,12 @@ export default function HomeScreen() {
       FileSystem.documentDirectory
     );
 
-    console.log('RES', res);
-
     setImages(
       res.map(file => {
         return {
           name: file,
           uri: FileSystem.documentDirectory + file,
+          type: getMediaType(file),
         };
       })
     );
@@ -46,16 +48,35 @@ export default function HomeScreen() {
         numColumns={3}
         contentContainerStyle={{ gap: 1 }}
         columnWrapperStyle={{ gap: 1 }}
-        renderItem={({ item, index }) => {
-          console.log(item);
+        renderItem={({ item }) => {
           return (
             <Link href={`/${item.name}`} asChild>
               <Pressable className="flex-1 max-w-[33.33%]">
-                <Image
-                  source={{ uri: item.uri }}
-                  // style={{ aspectRatio: 3 / 4, borderRadius: 5 }}
-                  className="aspect-[3/4] rounded-md "
-                />
+                {item.type === 'image' ? (
+                  <Image
+                    source={{ uri: item.uri }}
+                    // style={{ aspectRatio: 3 / 4, borderRadius: 5 }}
+                    className="aspect-[3/4] rounded-md"
+                  />
+                ) : (
+                  <>
+                    <Video
+                      resizeMode={ResizeMode.COVER}
+                      source={{ uri: item.uri }}
+                      // className="aspect-[3/4] rounded-md"
+                      style={{ aspectRatio: 3 / 4, borderRadius: 5 }}
+                      positionMillis={100}
+                      shouldPlay
+                      isLooping
+                    />
+                    <MaterialIcons
+                      className="absolute"
+                      name="play-circle-outline"
+                      size={24}
+                      color="white"
+                    />
+                  </>
+                )}
               </Pressable>
             </Link>
           );
