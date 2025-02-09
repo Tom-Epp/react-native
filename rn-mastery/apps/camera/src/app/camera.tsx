@@ -93,6 +93,8 @@ export default function CameraScreen() {
           />
         )}
         <View className="p-2.5">
+          {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
+          {/* @ts-expect-error */}
           <SafeAreaView edges={['bottom']}>
             <Button
               title="Save"
